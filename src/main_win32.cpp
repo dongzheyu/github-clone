@@ -48,8 +48,8 @@ std::string Utf16ToUtf8(const std::wstring& utf16Str) {
     return strTo;
 }
 
-// 修复WinMain函数签名
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nShowCmd) {
+// 使用标准WinMain函数签名
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
     // 初始化通用控件
     INITCOMMONCONTROLSEX icex;
     icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
@@ -57,7 +57,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
     InitCommonControlsEx(&icex);
     
     // 显示对话框
-    DialogBoxW(hInstance, MAKEINTRESOURCEW(IDD_MAIN_DIALOG), NULL, DialogProc);
+    DialogBox(hInstance, MAKEINTRESOURCE(IDD_MAIN_DIALOG), NULL, DialogProc);
     
     return 0;
 }
@@ -78,7 +78,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
             EnableWindow(g_hCloneButton, FALSE);
             
             // 设置对话框标题
-            SetWindowTextW(hwndDlg, L"GitHub仓库克隆工具");
+            SetWindowText(hwndDlg, "GitHub仓库克隆工具");
             return TRUE;
             
         case WM_COMMAND:
@@ -109,11 +109,11 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
             {
                 bool success = (bool)wParam;
                 if (success) {
-                    SetWindowTextW(g_hStatusLabel, L"仓库克隆成功！");
-                    MessageBoxW(hwndDlg, L"仓库克隆成功！", L"成功", MB_OK | MB_ICONINFORMATION);
+                    SetWindowText(g_hStatusLabel, "仓库克隆成功！");
+                    MessageBox(hwndDlg, "仓库克隆成功！", "成功", MB_OK | MB_ICONINFORMATION);
                 } else {
-                    SetWindowTextW(g_hStatusLabel, L"仓库克隆失败！");
-                    MessageBoxW(hwndDlg, L"仓库克隆失败！", L"错误", MB_OK | MB_ICONERROR);
+                    SetWindowText(g_hStatusLabel, "仓库克隆失败！");
+                    MessageBox(hwndDlg, "仓库克隆失败！", "错误", MB_OK | MB_ICONERROR);
                 }
                 EnableWindow(g_hFetchButton, TRUE);
                 EnableWindow(g_hCloneButton, TRUE);
@@ -130,21 +130,21 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 
 void OnFetchButtonClick(HWND hwndDlg) {
     // 获取用户名
-    wchar_t username[256];
-    GetWindowTextW(g_hUsernameEdit, username, sizeof(username) / sizeof(wchar_t));
+    char username[256];
+    GetWindowText(g_hUsernameEdit, username, sizeof(username));
     
-    if (wcslen(username) == 0) {
-        MessageBoxW(hwndDlg, L"请输入GitHub用户名", L"提示", MB_OK | MB_ICONWARNING);
+    if (strlen(username) == 0) {
+        MessageBox(hwndDlg, "请输入GitHub用户名", "提示", MB_OK | MB_ICONWARNING);
         return;
     }
     
     // 清空之前的仓库列表
-    SendMessageW(g_hRepoList, LB_RESETCONTENT, 0, 0);
+    SendMessage(g_hRepoList, LB_RESETCONTENT, 0, 0);
     g_repositories.clear();
     
     // 禁用按钮，防止重复点击
     EnableWindow(g_hFetchButton, FALSE);
-    SetWindowTextW(g_hStatusLabel, L"正在获取仓库列表...");
+    SetWindowText(g_hStatusLabel, "正在获取仓库列表...");
     
     // 创建线程获取仓库信息
     CreateThread(NULL, 0, FetchRepositoriesThread, hwndDlg, 0, NULL);
@@ -154,14 +154,11 @@ DWORD WINAPI FetchRepositoriesThread(LPVOID lpParam) {
     HWND hwndDlg = (HWND)lpParam;
     
     // 获取控件上的用户名
-    wchar_t username[256];
-    SendMessageW(g_hUsernameEdit, WM_GETTEXT, sizeof(username) / sizeof(wchar_t), (LPARAM)username);
-    
-    // 将宽字符串转换为UTF-8
-    std::string utf8Username = Utf16ToUtf8(username);
+    char username[256];
+    SendMessage(g_hUsernameEdit, WM_GETTEXT, sizeof(username), (LPARAM)username);
     
     // 获取仓库列表
-    std::vector<Repository> repos = GitHubAPI::getUserRepositories(utf8Username);
+    std::vector<Repository> repos = GitHubAPI::getUserRepositories(username);
     
     // 更新UI需要在主线程中完成
     g_repositories = repos;
@@ -177,52 +174,49 @@ void UpdateRepoList() {
     EnableWindow(g_hFetchButton, TRUE);
     
     if (g_repositories.empty()) {
-        SetWindowTextW(g_hStatusLabel, L"未找到该用户的公开仓库");
+        SetWindowText(g_hStatusLabel, "未找到该用户的公开仓库");
         return;
     }
     
     // 填充仓库列表
     for (const auto& repo : g_repositories) {
-        std::wstring wname = Utf8ToUtf16(repo.name);
-        std::wstring wstars = std::to_wstring(repo.stars);
-        std::wstring itemText = wname + L" (⭐" + wstars + L")";
-        SendMessageW(g_hRepoList, LB_ADDSTRING, 0, (LPARAM)itemText.c_str());
+        std::string itemText = repo.name + " (⭐" + std::to_string(repo.stars) + ")";
+        SendMessage(g_hRepoList, LB_ADDSTRING, 0, (LPARAM)itemText.c_str());
     }
     
-    std::wstring statusText = L"找到 " + std::to_wstring(g_repositories.size()) + L" 个仓库";
-    SetWindowTextW(g_hStatusLabel, statusText.c_str());
+    std::string statusText = "找到 " + std::to_string(g_repositories.size()) + " 个仓库";
+    SetWindowText(g_hStatusLabel, statusText.c_str());
     EnableWindow(g_hCloneButton, TRUE);
 }
 
 void OnBrowseButtonClick(HWND hwndDlg) {
     std::string path = Utils::selectDirectoryWin32();
     if (!path.empty()) {
-        std::wstring wpath = Utf8ToUtf16(path);
-        SetWindowTextW(g_hPathEdit, wpath.c_str());
+        SetWindowText(g_hPathEdit, path.c_str());
     }
 }
 
 void OnCloneButtonClick(HWND hwndDlg) {
     // 检查是否选择了仓库
-    int selectedIndex = (int)SendMessageW(g_hRepoList, LB_GETCURSEL, 0, 0);
+    int selectedIndex = (int)SendMessage(g_hRepoList, LB_GETCURSEL, 0, 0);
     if (selectedIndex == LB_ERR) {
-        MessageBoxW(hwndDlg, L"请从列表中选择一个仓库", L"提示", MB_OK | MB_ICONWARNING);
+        MessageBox(hwndDlg, "请从列表中选择一个仓库", "提示", MB_OK | MB_ICONWARNING);
         return;
     }
     
     // 获取目标路径
-    wchar_t pathBuffer[MAX_PATH];
-    GetWindowTextW(g_hPathEdit, pathBuffer, MAX_PATH);
+    char pathBuffer[MAX_PATH];
+    GetWindowText(g_hPathEdit, pathBuffer, MAX_PATH);
     
-    if (wcslen(pathBuffer) == 0) {
-        MessageBoxW(hwndDlg, L"请选择或输入目标路径", L"提示", MB_OK | MB_ICONWARNING);
+    if (strlen(pathBuffer) == 0) {
+        MessageBox(hwndDlg, "请选择或输入目标路径", "提示", MB_OK | MB_ICONWARNING);
         return;
     }
     
     // 禁用按钮，防止重复点击
     EnableWindow(g_hCloneButton, FALSE);
     EnableWindow(g_hFetchButton, FALSE);
-    SetWindowTextW(g_hStatusLabel, L"正在克隆仓库...");
+    SetWindowText(g_hStatusLabel, "正在克隆仓库...");
     
     // 创建线程克隆仓库
     CreateThread(NULL, 0, CloneRepositoryThread, (LPVOID)(intptr_t)selectedIndex, 0, NULL);
@@ -232,15 +226,12 @@ DWORD WINAPI CloneRepositoryThread(LPVOID lpParam) {
     int selectedIndex = (int)(intptr_t)lpParam;
     
     // 获取目标路径
-    wchar_t pathBuffer[MAX_PATH];
-    SendMessageW(g_hPathEdit, WM_GETTEXT, MAX_PATH, (LPARAM)pathBuffer);
-    
-    // 将宽字符串转换为UTF-8
-    std::string utf8Path = Utf16ToUtf8(pathBuffer);
+    char pathBuffer[MAX_PATH];
+    SendMessage(g_hPathEdit, WM_GETTEXT, MAX_PATH, (LPARAM)pathBuffer);
     
     // 构造完整路径
     std::string repoName = g_repositories[selectedIndex].name;
-    std::string fullPath = utf8Path + "\\" + repoName;
+    std::string fullPath = std::string(pathBuffer) + "\\" + repoName;
     
     // 执行克隆操作
     bool success = GitHubAPI::cloneRepository(g_repositories[selectedIndex].clone_url, fullPath);
