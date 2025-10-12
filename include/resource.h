@@ -1,0 +1,13 @@
+#ifndef RESOURCE_H
+#define RESOURCE_H
+
+#define IDD_MAIN_DIALOG     101
+#define IDC_USERNAME_EDIT   1001
+#define IDC_FETCH_BUTTON    1002
+#define IDC_REPO_LIST       1003
+#define IDC_BROWSE_BUTTON   1004
+#define IDC_PATH_EDIT       1005
+#define IDC_CLONE_BUTTON    1006
+#define IDC_STATUS_LABEL    1007
+
+#endif

@@ -1,0 +1,23 @@
+#include <windows.h>
+#include "resource.h"
+
+IDD_MAIN_DIALOG DIALOGEX 0, 0, 350, 250
+CAPTION "GitHub仓库克隆工具"
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+FONT 9, "Microsoft YaHei"
+{
+    LTEXT           "GitHub用户名:", -1, 10, 10, 60, 15
+    EDITTEXT        IDC_USERNAME_EDIT, 75, 8, 120, 15, ES_AUTOHSCROLL
+    PUSHBUTTON      "获取仓库", IDC_FETCH_BUTTON, 200, 8, 60, 15
+    
+    LTEXT           "仓库列表:", -1, 10, 30, 60, 15
+    LISTBOX         IDC_REPO_LIST, 10, 45, 330, 120, LBS_NOTIFY | LBS_HASSTRINGS | WS_VSCROLL | WS_BORDER
+    
+    LTEXT           "克隆到:", -1, 10, 170, 60, 15
+    EDITTEXT        IDC_PATH_EDIT, 75, 168, 120, 15, ES_AUTOHSCROLL
+    PUSHBUTTON      "浏览...", IDC_BROWSE_BUTTON, 200, 168, 60, 15
+    
+    PUSHBUTTON      "克隆选中仓库", IDC_CLONE_BUTTON, 120, 195, 100, 20
+    
+    LTEXT           "", IDC_STATUS_LABEL, 10, 220, 330, 15
+}
