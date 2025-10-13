@@ -4,8 +4,6 @@
 #include <sstream>
 #include <cstring>
 #include <algorithm>
-#include <locale>
-#include <codecvt>
 
 #ifdef _WIN32
 #include <winreg.h>
