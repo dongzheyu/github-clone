@@ -1,86 +1,118 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #ifdef _WIN32
 #include <windows.h>
 #endif
 #include "github_api.h"
 #include "utils.h"
 
+#ifdef _WIN32
+// UTF-8×ªGBK±àÂëº¯Êı
+std::string Utf8ToGbk(const std::string& utf8Str) {
+    if (utf8Str.empty()) return utf8Str;
+
+    // ÏÈ½«UTF-8×ª»»Îª¿í×Ö·û
+    int wideCharLength = MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, NULL, 0);
+    if (wideCharLength <= 0) return utf8Str;
+
+    std::vector<WCHAR> wideStr(wideCharLength);
+    MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, wideStr.data(), wideCharLength);
+
+    // ÔÙ½«¿í×Ö·û×ª»»ÎªGBK
+    int gbkLength = WideCharToMultiByte(936, 0, wideStr.data(), -1, NULL, 0, NULL, NULL);
+    if (gbkLength <= 0) return utf8Str;
+
+    std::vector<char> gbkStr(gbkLength);
+    WideCharToMultiByte(936, 0, wideStr.data(), -1, gbkStr.data(), gbkLength, NULL, NULL);
+
+    return std::string(gbkStr.data(), gbkLength - 1); // -1 to exclude null terminator
+}
+#endif
+
 int main() {
 #ifdef _WIN32
-    // è®¾ç½®æ§åˆ¶å°ä»£ç é¡µä¸ºGBK
+    // ÉèÖÃ¿ØÖÆÌ¨´úÂëÒ³ÎªGBK
     SetConsoleOutputCP(936);
     SetConsoleCP(936);
 #endif
 
-    std::cout << "GitHubä»“åº“å…‹éš†å·¥å…· (CLIç‰ˆæœ¬)\n";
+    std::cout << "GitHub²Ö¿â¿ËÂ¡¹¤¾ß (CLI°æ±¾)\n";
     std::cout << "============================\n";
-    
-    // è·å–ç”¨æˆ·å
-    std::cout << "è¯·è¾“å…¥GitHubç”¨æˆ·å: ";
+
+    // »ñÈ¡ÓÃ»§Ãû
+    std::cout << "ÇëÊäÈëGitHubÓÃ»§Ãû: ";
     std::string username;
     std::getline(std::cin, username);
-    
+
     if (username.empty()) {
-        std::cout << "ç”¨æˆ·åä¸èƒ½ä¸ºç©ºã€‚\n";
+        std::cout << "ÓÃ»§Ãû²»ÄÜÎª¿Õ¡£\n";
         return 1;
     }
-    
-    // è·å–ç”¨æˆ·ä»“åº“åˆ—è¡¨
-    std::cout << "æ­£åœ¨è·å– " << username << " çš„ä»“åº“åˆ—è¡¨...\n";
+
+    // »ñÈ¡ÓÃ»§²Ö¿âÁĞ±í
+    std::cout << "ÕıÔÚ»ñÈ¡ " << username << " µÄ²Ö¿âÁĞ±í...\n";
     std::vector<Repository> repos = GitHubAPI::getUserRepositories(username);
-    
+
     if (repos.empty()) {
-        std::cout << "æœªæ‰¾åˆ°ç”¨æˆ· " << username << " çš„å…¬å¼€ä»“åº“ã€‚\n";
+        std::cout << "Î´ÕÒµ½ÓÃ»§ " << username << " µÄ¹«¿ª²Ö¿â¡£\n";
         return 1;
     }
-    
-    // è®©ç”¨æˆ·é€‰æ‹©ä»“åº“
-    std::cout << "\næ‰¾åˆ° " << repos.size() << " ä¸ªä»“åº“:\n";
-    for (size_t i = 0; i < repos.size(); ++i) {
-        std::cout << i + 1 << ". " << repos[i].name << " (â˜…" << repos[i].stars << ")\n";
-        if (!repos[i].description.empty() && repos[i].description != "null") {
-            std::cout << "   æè¿°: " << repos[i].description << "\n";
-        }
-        std::cout << "   URL: " << repos[i].clone_url << "\n\n";
+
+    // ×ª»»²Ö¿âĞÅÏ¢ÎªGBK±àÂëÒÔ±ãÔÚ¿ØÖÆÌ¨ÕıÈ·ÏÔÊ¾
+    std::vector<Repository> gbkRepos = repos;
+    for (auto& repo : gbkRepos) {
+        repo.name = Utf8ToGbk(repo.name);
+        repo.description = Utf8ToGbk(repo.description);
+        // clone_url Í¨³£ÊÇASCII£¬²»ĞèÒª×ª»»
     }
-    
+
+    // ÈÃÓÃ»§Ñ¡Ôñ²Ö¿â
+    std::cout << "\nÕÒµ½ " << gbkRepos.size() << " ¸ö²Ö¿â:\n";
+    for (size_t i = 0; i < gbkRepos.size(); ++i) {
+        std::cout << i + 1 << ". " << gbkRepos[i].name << " (¡ï" << gbkRepos[i].stars << ")\n";
+        if (!gbkRepos[i].description.empty() && gbkRepos[i].description != "null") {
+            std::cout << "   ÃèÊö: " << gbkRepos[i].description << "\n";
+        }
+        std::cout << "   URL: " << repos[i].clone_url << "\n\n"; // URL±£³ÖUTF-8
+    }
+
     int choice;
     do {
-        std::cout << "è¯·é€‰æ‹©è¦å…‹éš†çš„ä»“åº“ (1-" << repos.size() << ", 0å–æ¶ˆ): ";
+        std::cout << "ÇëÑ¡ÔñÒª¿ËÂ¡µÄ²Ö¿â (1-" << gbkRepos.size() << ", 0È¡Ïû): ";
         std::cin >> choice;
-        
+
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(10000, '\n');
             choice = -1;
         }
-        
+
         if (choice == 0) {
-            std::cout << "æ“ä½œå·²å–æ¶ˆã€‚\n";
-            return 0; // ç”¨æˆ·å–æ¶ˆ
+            std::cout << "²Ù×÷ÒÑÈ¡Ïû¡£\n";
+            return 0; // ÓÃ»§È¡Ïû
         }
-        
-        if (choice < 0 || choice > (int)repos.size()) {
-            std::cout << "æ— æ•ˆé€‰æ‹©ï¼Œè¯·é‡æ–°è¾“å…¥ã€‚\n";
+
+        if (choice < 0 || choice > (int)gbkRepos.size()) {
+            std::cout << "ÎŞĞ§Ñ¡Ôñ£¬ÇëÖØĞÂÊäÈë¡£\n";
         }
-    } while (choice < 1 || choice > (int)repos.size());
-    
-    int selectedIndex = choice - 1; // è¿”å›0åŸºç´¢å¼•
-    
-    // è·å–ç›®æ ‡è·¯å¾„
-    std::cout << "è¯·é€‰æ‹©æˆ–è¾“å…¥å…‹éš†ç›®æ ‡ç›®å½•: ";
+    } while (choice < 1 || choice > (int)gbkRepos.size());
+
+    int selectedIndex = choice - 1; // ·µ»Ø0»ùË÷Òı
+
+    // »ñÈ¡Ä¿±êÂ·¾¶
+    std::cout << "ÇëÑ¡Ôñ»òÊäÈë¿ËÂ¡Ä¿±êÄ¿Â¼: ";
     std::string destination;
-    std::cin.ignore(10000, '\n'); // æ¸…é™¤è¾“å…¥ç¼“å†²åŒº
+    std::cin.ignore(10000, '\n'); // Çå³ıÊäÈë»º³åÇø
     std::getline(std::cin, destination);
-    
+
     if (destination.empty()) {
-        std::cout << "æœªé€‰æ‹©ç›®å½•ï¼Œæ“ä½œå·²å–æ¶ˆã€‚\n";
+        std::cout << "Î´Ñ¡ÔñÄ¿Â¼£¬²Ù×÷ÒÑÈ¡Ïû¡£\n";
         return 1;
     }
-    
-    // æ„é€ å®Œæ•´è·¯å¾„ï¼ˆä»“åº“åä½œä¸ºç›®å½•ï¼‰
-    std::string fullPath = destination + "/" + repos[selectedIndex].name;
+
+    // ¹¹ÔìÍêÕûÂ·¾¶£¨²Ö¿âÃû×÷ÎªÄ¿Â¼£©- Ê¹ÓÃÔ­Ê¼UTF-8²Ö¿âÃûÓÃÓÚÂ·¾¶
+    std::string fullPath = destination + "/" + repos[selectedIndex].name; // Ê¹ÓÃÔ­Ê¼UTF-8²Ö¿âÃû
 #ifdef _WIN32
     size_t pos = 0;
     while ((pos = fullPath.find("/", pos)) != std::string::npos) {
@@ -88,15 +120,15 @@ int main() {
         pos += 1;
     }
 #endif
-    
-    std::cout << "æ­£åœ¨å…‹éš† " << repos[selectedIndex].name << " åˆ° " << destination << " ...\n";
-    
-    // æ‰§è¡Œå…‹éš†æ“ä½œ
+
+    std::cout << "ÕıÔÚ¿ËÂ¡ " << gbkRepos[selectedIndex].name << " µ½ " << destination << " ...\n";
+
+    // Ö´ĞĞ¿ËÂ¡²Ù×÷ - Ê¹ÓÃÔ­Ê¼UTF-8 URLºÍÂ·¾¶
     if (GitHubAPI::cloneRepository(repos[selectedIndex].clone_url, fullPath)) {
-        std::cout << "ä»“åº“å…‹éš†æˆåŠŸï¼\n";
+        std::cout << "²Ö¿â¿ËÂ¡³É¹¦£¡\n";
         return 0;
     } else {
-        std::cout << "ä»“åº“å…‹éš†å¤±è´¥ã€‚\n";
+        std::cout << "²Ö¿â¿ËÂ¡Ê§°Ü¡£\n";
         return 1;
     }
 }
