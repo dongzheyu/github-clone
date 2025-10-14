@@ -258,7 +258,7 @@ DWORD WINAPI CloneRepositoryThread(LPVOID lpParam) {
     return 0;
 }
 
-// UTF-8转GBK编码函数
+// UTF-8转G编码函数
 std::string Utf8ToGbk(const std::string& utf8Str) {
     if (utf8Str.empty()) return utf8Str;
 

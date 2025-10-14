@@ -1,10 +1,9 @@
 #include "App.xaml.h"
 #include "MainWindow.xaml.h"
-#include <winrt/Windows.UI.Xaml.h>
-#include <winrt/Microsoft.UI.Xaml.h>
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Xaml.XamlTypeInfo.h>
-#include <winrt/Windows.ApplicationModel.Activation.h>
+#include <winrt/Microsoft.UI.Xaml.Window.h>
+
+using namespace winrt;
+using namespace Microsoft::UI::Xaml;
 
 namespace winrt::GithubClone::implementation
 {
@@ -13,7 +12,7 @@ namespace winrt::GithubClone::implementation
         InitializeComponent();
     }
 
-    void App::OnLaunched(winrt::Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const&)
+    void App::OnLaunched(LaunchActivatedEventArgs const&)
     {
         window = make<MainWindow>();
         window.Activate();

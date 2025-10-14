@@ -14,7 +14,7 @@
 - C++17 或更高版本
 - CMake 3.20 或更高版本
 - Windows SDK (用于 Win32 和 WinUI 3 版本)
-- Windows App SDK (用于 WinUI 3 版本，已包含在项目中)
+- Windows App SDK (用于 WinUI 3 版本)
 
 ## 构建说明
 

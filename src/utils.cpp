@@ -3,11 +3,14 @@
 #include <iostream>
 #include <sstream>
 #include <limits>
+#include <algorithm>
+#include <cstring>
 
 #ifdef _WIN32
 #include <windows.h>
 #include <shlobj.h>
 #include <io.h>
+#include <comdef.h>
 #define access _access
 #define F_OK 0
 #else
@@ -41,46 +44,46 @@ bool Utils::isGitInstalled() {
 
 int Utils::selectRepositoryCLI(const std::vector<Repository>& repos) {
     if (repos.empty()) {
-        std::cout << "该用户没有公开仓库。\n";
+        std::cout << "The user has no public repositories.\n";
         return -1;
     }
     
-    std::cout << "\n找到 " << repos.size() << " 个仓库:\n";
+    std::cout << "\nFound " << repos.size() << " repositories:\n";
     for (size_t i = 0; i < repos.size(); ++i) {
         std::cout << i + 1 << ". " << repos[i].name << " (⭐" << repos[i].stars << ")\n";
         if (!repos[i].description.empty() && repos[i].description != "null") {
-            std::cout << "   描述: " << repos[i].description << "\n";
+            std::cout << "   Description: " << repos[i].description << "\n";
         }
         std::cout << "   URL: " << repos[i].clone_url << "\n\n";
     }
     
     int choice;
     do {
-        std::cout << "请选择要克隆的仓库 (1-" << repos.size() << ", 0取消): ";
+        std::cout << "Please select a repository to clone (1-" << repos.size() << ", 0 to cancel): ";
         std::cin >> choice;
         
         if (std::cin.fail()) {
             std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
             choice = -1;
         }
         
         if (choice == 0) {
-            return -1; // 用户取消
+            return -1; // User cancelled
         }
         
         if (choice < 0 || choice > (int)repos.size()) {
-            std::cout << "无效选择，请重新输入。\n";
+            std::cout << "Invalid selection, please try again.\n";
         }
     } while (choice < 1 || choice > (int)repos.size());
     
-    return choice - 1; // 返回0基索引
+    return choice - 1; // Return 0-based index
 }
 
 std::string Utils::getInput(const std::string& prompt) {
     std::string input;
     std::cout << prompt;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // 清除输入缓冲区
+    std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n'); // Clear input buffer
     std::getline(std::cin, input);
     return input;
 }
@@ -116,7 +119,7 @@ std::string Utils::selectDirectoryWin32() {
                 hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
                 
                 if (SUCCEEDED(hr)) {
-                    // 将宽字符转换为多字节字符
+                    // Convert wide characters to multibyte characters
                     int size_needed = WideCharToMultiByte(CP_UTF8, 0, pszFilePath, -1, NULL, 0, NULL, NULL);
                     std::string result(size_needed - 1, 0);
                     WideCharToMultiByte(CP_UTF8, 0, pszFilePath, -1, &result[0], size_needed, NULL, NULL);
@@ -134,6 +137,6 @@ std::string Utils::selectDirectoryWin32() {
     }
     
     CoUninitialize();
-    return ""; // 如果对话框被取消或出错
+    return ""; // If dialog is cancelled or error occurs
 }
 #endif

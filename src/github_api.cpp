@@ -68,44 +68,44 @@ std::vector<Repository> GitHubAPI::getUserRepositories(const std::string& userna
         return repos;
     }
 
-    // 简单解析JSON响应
-    // 注意：这是一个简化的JSON解析器，实际项目中建议使用专业库如nlohmann/json
+    // Simple JSON parsing
+    // Note: This is a simplified JSON parser, in real projects it is recommended to use professional libraries such as nlohmann/json
     size_t pos = 0;
     while ((pos = response.find("\"name\":", pos)) != std::string::npos) {
         Repository repo;
         
-        // 提取仓库名
+        // Extract repository name
         size_t name_start = response.find("\"", pos + 7) + 1;
         size_t name_end = response.find("\"", name_start);
         repo.name = response.substr(name_start, name_end - name_start);
         
-        // 提取clone_url
+        // Extract clone_url
         size_t clone_pos = response.find("\"clone_url\":", pos);
         size_t clone_start = response.find("\"", clone_pos + 12) + 1;
         size_t clone_end = response.find("\"", clone_start);
         repo.clone_url = response.substr(clone_start, clone_end - clone_start);
         
-        // 提取描述
+        // Extract description
         size_t desc_pos = response.find("\"description\":", pos);
         if (desc_pos != std::string::npos) {
             if (response.substr(desc_pos + 14, 4) == "null") {
-                repo.description = "无描述";
+                repo.description = "No description";
             } else {
                 size_t desc_start = response.find("\"", desc_pos + 14) + 1;
                 size_t desc_end = response.find("\"", desc_start);
                 repo.description = response.substr(desc_start, desc_end - desc_start);
             }
         } else {
-            repo.description = "无描述";
+            repo.description = "No description";
         }
         
-        // 提取星标数
+        // Extract star count
         size_t star_pos = response.find("\"stargazers_count\":", pos);
         if (star_pos != std::string::npos) {
             size_t star_start = star_pos + 19;
             size_t star_end = response.find(",", star_start);
             std::string star_str = response.substr(star_start, star_end - star_start);
-            // 移除可能的空格
+            // Remove possible spaces
             star_str.erase(std::remove_if(star_str.begin(), star_str.end(), ::isspace), star_str.end());
             if (!star_str.empty()) {
                 repo.stars = std::stoi(star_str);

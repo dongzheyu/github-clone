@@ -1,8 +1,7 @@
 #pragma once
+
 #include "App.xaml.g.h"
-#include <winrt/Windows.UI.Xaml.h>
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Xaml.XamlTypeInfo.h>
+#include <winrt/Microsoft.UI.Xaml.h>
 
 namespace winrt::GithubClone::implementation
 {
@@ -10,9 +9,13 @@ namespace winrt::GithubClone::implementation
     {
         App();
 
-        void OnLaunched(winrt::Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const&);
+        void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
+    };
+}
 
-    private:
-        winrt::Microsoft::UI::Xaml::Window window{ nullptr };
+namespace winrt::GithubClone::factory_implementation
+{
+    struct App : AppT<App, implementation::App>
+    {
     };
 }

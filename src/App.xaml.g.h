@@ -1,26 +1,22 @@
 #pragma once
-#include "App.xaml.h"
+
+// 注意：这些头文件路径可能需要根据实际安装位置调整
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/Microsoft.UI.Xaml.h>
+#include <winrt/Microsoft.UI.Xaml.Controls.h>
+#include <winrt/Microsoft.UI.Xaml.Controls.Primitives.h>
+#include <winrt/Microsoft.UI.Xaml.Interop.h>
+#include <winrt/Microsoft.UI.Xaml.Window.h>
 
 namespace winrt::GithubClone::implementation
 {
-    template <typename D, typename ... I>
-    struct App_baseWithProvider : public App_base<D, I...>
+    struct App : AppT<App>
     {
-        using composable = D;
-    protected:
-        App_baseWithProvider()
-        {
-            impl::call_factory<App, IAppStatics>([&](IAppStatics const& f) { f.CreateInstance(*this); });
-        }
-    };
-    template <typename D, typename ... I>
-    using AppT2 = App_baseWithProvider<D, I...>;
-}
-namespace winrt::GithubClone
-{
-    struct App : AppT2<App, implementation::App>
-    {
-        App() = default;
-        using AppT2<App, implementation::App>::App;
+        App();
+        void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
+        
+    private:
+        winrt::Microsoft::UI::Xaml::Window window{ nullptr };
     };
 }
