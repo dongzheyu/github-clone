@@ -3,8 +3,6 @@
 #include <iostream>
 #include <sstream>
 #include <limits>
-#include <fcntl.h>
-#include <io.h>
 
 #ifdef _WIN32
 #include <windows.h>
