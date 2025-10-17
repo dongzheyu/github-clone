@@ -1,90 +1,91 @@
 # GitHub 仓库克隆工具
 
-这是一个可以克隆 GitHub 用户仓库的工具，支持命令行界面和图形界面。
+这是一个可以帮助你轻松下载 GitHub 用户代码仓库的小工具，它有多种使用方式：适合普通用户的图形界面版和适合技术用户的命令行版。
 
-## 功能
+## 这个工具有什么用？
 
-- 通过用户名获取 GitHub 仓库列表
-- 克隆选中的仓库到本地目录
-- 支持 Win32 和 WinUI 3 两种图形界面版本
-- 命令行版本支持自动化操作
+假设你想下载某个 GitHub 用户的所有公开项目到你的电脑上，通常你需要一个一个地去找、去下载。这个工具可以帮你：
+- 自动获取指定用户的所有公开项目列表
+- 让你选择想要下载哪些项目
+- 一键将选中的项目保存到你电脑上的指定位置
 
-## 编译要求
+## 怎么使用这个工具？
 
-- C++17 或更高版本
-- CMake 3.20 或更高版本
-- Windows SDK (用于 Win32 和 WinUI 3 版本)
-- Windows App SDK (用于 WinUI 3 版本)
+### 方法一：图形界面版（推荐给普通用户）
 
-## 构建说明
+这是最简单的使用方式，就像平常使用 Windows 软件一样：
+1. 双击运行 `github_clone_win32.exe`
+2. 在打开的窗口里输入你想下载项目的 GitHub 用户名（比如 microsoft、google 等）
+3. 点击"获取仓库"按钮，稍等片刻就能看到这个用户所有的公开项目
+4. 勾选你想要下载的项目
+5. 选择保存到电脑上的哪个文件夹
+6. 点击"克隆选中项"按钮开始下载
 
-使用 CMake 构建项目:
+### 方法二：命令行版（适合熟悉命令行的用户）
 
+如果你更喜欢用命令行，或者想批量处理，可以使用命令行版本：
 ```bash
-mkdir build
-cd build
-cmake ..
-cmake --build .
+github_clone_cli <用户名> <保存路径>
 ```
 
-### 可执行文件
-
-构建后将生成以下可执行文件:
-
-1. `github_clone_cli` - 命令行版本
-2. `github_clone_win32` - Win32 图形界面版本
-3. `github_clone_winui3` - WinUI 3 图形界面版本(需要 Windows App SDK)
-
-## 使用方法
-
-### 命令行版本
-
-```bash
-github_clone_cli <username> <destination_path>
-```
-
-示例:
+例如，要把微软的所有公开项目下载到 D:\Projects 文件夹：
 ```bash
 github_clone_cli microsoft D:\Projects
 ```
 
-### 图形界面版本
+### 方法三：EasyX 图形界面版（现代化界面）
 
-运行 `github_clone_win32.exe` 或 `github_clone_winui3.exe`，在界面中输入 GitHub 用户名，获取仓库列表，选择要克隆的仓库和目标路径，然后点击克隆按钮。
+我们还提供了一个使用 EasyX 图形库开发的现代化界面版本：
+1. 运行 `github_clone_easyx.exe`
+2. 在界面上输入 GitHub 用户名
+3. 点击"获取仓库"按钮获取仓库列表
+4. 从列表中选择要克隆的仓库
+5. 选择保存路径
+6. 点击"克隆"按钮开始下载
 
-## WinUI 3 版本说明
+### 方法四：Qt 图形界面版（功能最丰富的界面）
 
-WinUI 3 版本提供了现代化的用户界面，具有以下特点:
+最新版本使用 Qt 框架开发，具有更现代、更友好的用户界面：
+1. 运行 `github_clone_qt.exe`
+2. 在界面上输入 GitHub 用户名
+3. 点击"获取仓库"按钮获取仓库列表
+4. 从列表中选择要克隆的仓库
+5. 选择保存路径
+6. 点击"克隆选中仓库"按钮开始下载
 
-- 现代化的 Fluent Design 设计语言
-- 更好的触摸和鼠标交互支持
-- 支持深色/浅色主题
-- 响应式布局，适应不同屏幕尺寸
-- 更丰富的动画和视觉效果
+## EasyX 图形库支持
 
-注意: WinUI 3 版本需要 Windows App SDK 才能运行，但已包含在项目中。
+本项目现已集成 EasyX 图形库支持，可以使用 D:\桌面\easyx4mingw_25.9.10 中的图形库进行图形界面开发。
+- 头文件已复制到: D:\msys64\mingw64\include\
+- 库文件已复制到: D:\msys64\mingw64\lib\
 
-### 构建 WinUI 3 版本的详细步骤
+## Qt 图形库支持
 
-1. 确保使用 Visual Studio 2022 或兼容的 MSVC 工具链
-2. CMake 会自动使用项目中的 Windows App SDK 包
-3. 使用 CMake 构建项目（如上所示）
-4. 如果遇到链接错误，可能需要手动添加 Windows App SDK 引用
+本项目现已集成 Qt 图形库支持，可以使用 Qt 框架创建现代化的图形界面。
+- 项目支持 Qt5 和 Qt6
+- 使用 CMake 构建系统自动检测和链接 Qt 库
 
-## 文件说明
+## 需要什么才能运行这个工具？
 
+你的电脑需要满足以下条件：
+- Windows 操作系统
+- 能够连接互联网
+
+## 项目包含哪些主要文件？
+
+对于想了解项目内部结构的开发者：
 - `src/main_cli.cpp` - 命令行版本主程序
 - `src/main_win32.cpp` - Win32 图形界面版本主程序
-- `src/github_api.cpp` - GitHub API 接口实现
-- `src/utils.cpp` - 工具函数实现
-- `include/github_api.h` - GitHub API 接口头文件
-- `include/utils.h` - 工具函数头文件
-- `resources/resource.rc` - Win32 资源文件
-- `src/App.xaml` - WinUI 3 应用程序定义
-- `src/MainWindow.xaml` - WinUI 3 主窗口界面定义
-- `src/github_clone_winui3.exe.manifest` - WinUI 3 应用程序清单
-- `packages/` - Windows App SDK 包目录
+- `src/main_win32_easyx.cpp` - EasyX 图形界面版本主程序
+- `src/main_qt.cpp` - Qt 图形界面版本主程序入口
+- `src/mainwindow.h` - Qt 主窗口类头文件
+- `src/mainwindow.cpp` - Qt 主窗口类实现
+- `src/github_api.cpp` - 与 GitHub 网站通信的功能
+- `src/utils.cpp` - 一些通用的辅助功能
+- `include/github_api.h` - GitHub 功能的接口声明
+- `include/utils.h` - 辅助功能的接口声明
+- `resources/resource.rc` - Win32 图形界面的资源文件
 
 ## 备份文件
 
-- `src/main_win32_backup.cpp` - Win32 版本的备份文件
+- `src/main_win32_backup.cpp` - Win32 版本的备份代码
