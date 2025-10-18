@@ -1,3 +1,21 @@
+/*
+ * GitHubä»“åº“å…‹éš†å·¥å…·
+ * Copyright (C) 2025 OpenSource Contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include <windows.h>
 #include <commctrl.h>
 #include <string>
@@ -11,7 +29,7 @@
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-// È«¾Ö±äÁ¿
+// È«ï¿½Ö±ï¿½ï¿½ï¿½
 HWND g_hUsernameEdit = NULL;
 HWND g_hFetchButton = NULL;
 HWND g_hRepoList = NULL;
@@ -21,7 +39,7 @@ HWND g_hCloneButton = NULL;
 HWND g_hStatusLabel = NULL;
 std::vector<Repository> g_repositories;
 
-// ÉùÃ÷º¯Êý
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void OnFetchButtonClick(HWND hwndDlg);
 void OnBrowseButtonClick(HWND hwndDlg);
@@ -32,13 +50,13 @@ void UpdateRepoList();
 std::string Utf8ToGbk(const std::string& utf8Str);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
-    // ³õÊ¼»¯Í¨ÓÃ¿Ø¼þ
+    // ï¿½ï¿½Ê¼ï¿½ï¿½Í¨ï¿½Ã¿Ø¼ï¿½
     INITCOMMONCONTROLSEX icex;
     icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
     icex.dwICC = ICC_STANDARD_CLASSES;
     InitCommonControlsEx(&icex);
 
-    // ÏÔÊ¾¶Ô»°¿ò
+    // ï¿½ï¿½Ê¾ï¿½Ô»ï¿½ï¿½ï¿½
     DialogBox(hInstance, MAKEINTRESOURCE(IDD_MAIN_DIALOG), NULL, DialogProc);
 
     return 0;
@@ -47,7 +65,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
         case WM_INITDIALOG:
-            // ³õÊ¼»¯¿Ø¼þ¾ä±ú
+            // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½
             g_hUsernameEdit = GetDlgItem(hwndDlg, IDC_USERNAME_EDIT);
             g_hFetchButton = GetDlgItem(hwndDlg, IDC_FETCH_BUTTON);
             g_hRepoList = GetDlgItem(hwndDlg, IDC_REPO_LIST);
@@ -56,11 +74,11 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
             g_hCloneButton = GetDlgItem(hwndDlg, IDC_CLONE_BUTTON);
             g_hStatusLabel = GetDlgItem(hwndDlg, IDC_STATUS_LABEL);
 
-            // ÉèÖÃ°´Å¥³õÊ¼×´Ì¬
+            // ï¿½ï¿½ï¿½Ã°ï¿½Å¥ï¿½ï¿½Ê¼×´Ì¬
             EnableWindow(g_hCloneButton, FALSE);
 
-            // ÉèÖÃ¶Ô»°¿ò±êÌâ
-            SetWindowTextA(hwndDlg, "GitHub²Ö¿â¿ËÂ¡¹¤¾ß");
+            // ï¿½ï¿½ï¿½Ã¶Ô»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            SetWindowTextA(hwndDlg, "GitHubï¿½Ö¿ï¿½ï¿½ï¿½Â¡ï¿½ï¿½ï¿½ï¿½");
             return TRUE;
 
         case WM_COMMAND:
@@ -86,25 +104,25 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
         case WM_LBUTTONDOWN:
         case WM_LBUTTONUP:
             {
-                // ´¦ÀíÁÐ±í¿òÖÐµÄ¸´Ñ¡¿òµã»÷
+                // ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ÐµÄ¸ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (HWND(lParam) == g_hRepoList) {
-                    // »ñÈ¡Êó±êµã»÷Î»ÖÃ
+                    // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
                     POINT pt;
                     pt.x = LOWORD(wParam);
                     pt.y = HIWORD(wParam);
                     
-                    // »ñÈ¡ÁÐ±í¿òÖÐµÄÏîÄ¿Ë÷Òý
+                    // ï¿½ï¿½È¡ï¿½Ð±ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½
                     int index = SendMessageA(g_hRepoList, LB_ITEMFROMPOINT, 0, MAKELPARAM(pt.x, pt.y));
-                    if (!(index & 0xFFFF0000)) { // ¼ì²éÊÇ·ñµã»÷ÔÚÓÐÐ§ÏîÄ¿ÉÏ
-                        // ¼ÆËãµã»÷ÊÇ·ñÔÚ¸´Ñ¡¿òÇøÓò
-                        if (pt.x >= 2 && pt.x <= 16) { // ¸´Ñ¡¿ò¿í¶ÈÎª14ÏñËØ£¬¼ÓÉÏ±ß¾à
-                            // ÇÐ»»¸´Ñ¡¿ò×´Ì¬
+                    if (!(index & 0xFFFF0000)) { // ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½Ä¿ï¿½ï¿½
+                        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ú¸ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                        if (pt.x >= 2 && pt.x <= 16) { // ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª14ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½Ï±ß¾ï¿½
+                            // ï¿½Ð»ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½×´Ì¬
                             DWORD itemData = SendMessageA(g_hRepoList, LB_GETITEMDATA, index, 0);
-                            itemData ^= 1; // ÇÐ»»×îµÍÎ»£¨Ñ¡ÖÐ×´Ì¬£©
+                            itemData ^= 1; // ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½Ñ¡ï¿½ï¿½×´Ì¬ï¿½ï¿½
                             SendMessageA(g_hRepoList, LB_SETITEMDATA, index, itemData);
-                            InvalidateRect(g_hRepoList, NULL, TRUE); // ÖØ»æÁÐ±í¿ò
+                            InvalidateRect(g_hRepoList, NULL, TRUE); // ï¿½Ø»ï¿½ï¿½Ð±ï¿½ï¿½ï¿½
                             
-                            // ¼ì²éÊÇ·ñÓÐÑ¡ÖÐµÄÏîÄ¿À´¸üÐÂ¿ËÂ¡°´Å¥×´Ì¬
+                            // ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ñ¡ï¿½Ðµï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½Â¿ï¿½Â¡ï¿½ï¿½Å¥×´Ì¬
                             bool hasSelection = false;
                             int count = SendMessageA(g_hRepoList, LB_GETCOUNT, 0, 0);
                             for (int i = 0; i < count; i++) {
@@ -124,24 +142,24 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
             }
             break;
 
-        case WM_USER + 1: // ×Ô¶¨ÒåÏûÏ¢£¬ÓÃÓÚ¸üÐÂ²Ö¿âÁÐ±í
+        case WM_USER + 1: // ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½Â²Ö¿ï¿½ï¿½Ð±ï¿½
             UpdateRepoList();
             return TRUE;
 
-        case WM_USER + 2: // ×Ô¶¨ÒåÏûÏ¢£¬ÓÃÓÚ¸üÐÂ¿ËÂ¡×´Ì¬
+        case WM_USER + 2: // ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½Â¿ï¿½Â¡×´Ì¬
             {
                 bool success = (bool)wParam;
                 std::string statusText, messageText, titleText;
 
                 if (success) {
-                    statusText = "²Ö¿â¿ËÂ¡³É¹¦£¡";
-                    messageText = "²Ö¿â¿ËÂ¡³É¹¦£¡";
-                    titleText = "³É¹¦";
+                    statusText = "ï¿½Ö¿ï¿½ï¿½ï¿½Â¡ï¿½É¹ï¿½ï¿½ï¿½";
+                    messageText = "ï¿½Ö¿ï¿½ï¿½ï¿½Â¡ï¿½É¹ï¿½ï¿½ï¿½";
+                    titleText = "ï¿½É¹ï¿½";
                     MessageBoxA(hwndDlg, messageText.c_str(), titleText.c_str(), MB_OK | MB_ICONINFORMATION);
                 } else {
-                    statusText = "²Ö¿â¿ËÂ¡Ê§°Ü£¡";
-                    messageText = "²Ö¿â¿ËÂ¡Ê§°Ü£¡";
-                    titleText = "´íÎó";
+                    statusText = "ï¿½Ö¿ï¿½ï¿½ï¿½Â¡Ê§ï¿½Ü£ï¿½";
+                    messageText = "ï¿½Ö¿ï¿½ï¿½ï¿½Â¡Ê§ï¿½Ü£ï¿½";
+                    titleText = "ï¿½ï¿½ï¿½ï¿½";
                     MessageBoxA(hwndDlg, messageText.c_str(), titleText.c_str(), MB_OK | MB_ICONERROR);
                 }
                 SetWindowTextA(g_hStatusLabel, statusText.c_str());
@@ -151,7 +169,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
             return TRUE;
             
         case WM_DRAWITEM:
-            // ´¦Àí×Ô¶¨Òå»æÖÆÁÐ±íÏî£¨Ìí¼Ó¸´Ñ¡¿ò£©
+            // ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½î£¨ï¿½ï¿½ï¿½Ó¸ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½
             if (wParam == IDC_REPO_LIST) {
                 LPDRAWITEMSTRUCT lpDrawItem = (LPDRAWITEMSTRUCT)lParam;
                 if (lpDrawItem->itemID == -1) break;
@@ -159,7 +177,7 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
                 HDC hdc = lpDrawItem->hDC;
                 RECT rc = lpDrawItem->rcItem;
                 
-                // »æÖÆÑ¡ÖÐ×´Ì¬±³¾°
+                // ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½
                 if (lpDrawItem->itemState & ODS_SELECTED) {
                     SetBkColor(hdc, GetSysColor(COLOR_HIGHLIGHT));
                     SetTextColor(hdc, GetSysColor(COLOR_HIGHLIGHTTEXT));
@@ -170,11 +188,11 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
                     FillRect(hdc, &rc, GetSysColorBrush(COLOR_WINDOW));
                 }
                 
-                // ´ÓÁÐ±íÏîÊý¾ÝÖÐ»ñÈ¡Ñ¡ÖÐ×´Ì¬
+                // ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½È¡Ñ¡ï¿½ï¿½×´Ì¬
                 DWORD itemData = SendMessageA(g_hRepoList, LB_GETITEMDATA, lpDrawItem->itemID, 0);
                 bool isChecked = (itemData & 1);
                 
-                // »æÖÆ¸´Ñ¡¿ò
+                // ï¿½ï¿½ï¿½Æ¸ï¿½Ñ¡ï¿½ï¿½
                 RECT rcCheck;
                 rcCheck.left = rc.left + 2;
                 rcCheck.top = rc.top + 2;
@@ -185,13 +203,13 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
                     DFCS_BUTTONCHECK | 
                     (isChecked ? DFCS_CHECKED : 0));
                 
-                // »æÖÆÎÄ±¾
+                // ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½
                 std::string* itemText = (std::string*)lpDrawItem->itemData;
                 RECT rcText = rc;
                 rcText.left += 20;
                 DrawTextA(hdc, itemText->c_str(), -1, &rcText, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
                 
-                // »æÖÆ½¹µã¿ò
+                // ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (lpDrawItem->itemState & ODS_FOCUS) {
                     DrawFocusRect(hdc, &rc);
                 }
@@ -207,95 +225,95 @@ INT_PTR CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 }
 
 void OnFetchButtonClick(HWND hwndDlg) {
-    // »ñÈ¡ÓÃ»§Ãû
+    // ï¿½ï¿½È¡ï¿½Ã»ï¿½ï¿½ï¿½
     char username[256];
     GetWindowTextA(g_hUsernameEdit, username, sizeof(username));
 
     if (strlen(username) == 0) {
-        MessageBoxA(hwndDlg, "ÇëÊäÈëGitHubÓÃ»§Ãû", "ÌáÊ¾", MB_OK | MB_ICONWARNING);
+        MessageBoxA(hwndDlg, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GitHubï¿½Ã»ï¿½ï¿½ï¿½", "ï¿½ï¿½Ê¾", MB_OK | MB_ICONWARNING);
         return;
     }
 
-    // Çå¿ÕÖ®Ç°µÄ²Ö¿âÁÐ±í
+    // ï¿½ï¿½ï¿½ï¿½Ö®Ç°ï¿½Ä²Ö¿ï¿½ï¿½Ð±ï¿½
     SendMessageA(g_hRepoList, LB_RESETCONTENT, 0, 0);
     g_repositories.clear();
 
-    // ½ûÓÃ°´Å¥·ÀÖ¹ÖØ¸´µã»÷
+    // ï¿½ï¿½ï¿½Ã°ï¿½Å¥ï¿½ï¿½Ö¹ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½
     EnableWindow(g_hFetchButton, FALSE);
-    SetWindowTextA(g_hStatusLabel, "ÕýÔÚ»ñÈ¡²Ö¿âÁÐ±í...");
+    SetWindowTextA(g_hStatusLabel, "ï¿½ï¿½ï¿½Ú»ï¿½È¡ï¿½Ö¿ï¿½ï¿½Ð±ï¿½...");
 
-    // ´´½¨Ïß³Ì»ñÈ¡²Ö¿âÐÅÏ¢
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ì»ß³ï¿½È¡ï¿½Ö¿ï¿½ï¿½ï¿½Ï¢
     CreateThread(NULL, 0, FetchRepositoriesThread, hwndDlg, 0, NULL);
 }
 
 DWORD WINAPI FetchRepositoriesThread(LPVOID lpParam) {
     HWND hwndDlg = (HWND)lpParam;
 
-    // ´Ó¿Ø¼þ»ñÈ¡ÓÃ»§Ãû
+    // ï¿½Ó¿Ø¼ï¿½ï¿½ï¿½È¡ï¿½Ã»ï¿½ï¿½ï¿½
     char username[256];
     SendMessageA(g_hUsernameEdit, WM_GETTEXT, sizeof(username), (LPARAM)username);
 
-    // »ñÈ¡²Ö¿âÁÐ±í - ´ÓAPI»ñÈ¡µÄÊÇUTF-8±àÂë
+    // ï¿½ï¿½È¡ï¿½Ö¿ï¿½ï¿½Ð±ï¿½ - ï¿½ï¿½APIï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½UTF-8ï¿½ï¿½ï¿½ï¿½
     std::vector<Repository> repos = GitHubAPI::getUserRepositories(username);
 
-    // ½«UTF-8±àÂë×ª»»ÎªGBK±àÂëÒÔ±ãÔÚWindowsÉÏÕýÈ·ÏÔÊ¾
+    // ï¿½ï¿½UTF-8ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ÎªGBKï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½Windowsï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½Ê¾
     for (auto& repo : repos) {
         repo.name = Utf8ToGbk(repo.name);
         repo.description = Utf8ToGbk(repo.description);
-        // clone_url Í¨³£ÊÇASCII±àÂë£¬²»ÐèÒª×ª»»
+        // clone_url Í¨ï¿½ï¿½ï¿½ï¿½ASCIIï¿½ï¿½ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½Òª×ªï¿½ï¿½
     }
 
-    // ÔÚUIÏß³ÌÖÐ¸üÐÂÐèÒªµÄÈ«¾Ö±äÁ¿
+    // ï¿½ï¿½UIï¿½ß³ï¿½ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½È«ï¿½Ö±ï¿½ï¿½ï¿½
     g_repositories = repos;
 
-    // ·¢ËÍÏûÏ¢Í¨ÖªÖ÷Ïß³Ì¸üÐÂUI
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ÖªÍ¨ï¿½ï¿½ï¿½Ì¸ß³ï¿½ï¿½ï¿½UI
     PostMessage(hwndDlg, WM_USER + 1, 0, 0);
 
     return 0;
 }
 
 void UpdateRepoList() {
-    // ÆôÓÃ»ñÈ¡°´Å¥
+    // ï¿½ï¿½ï¿½Ã»ï¿½È¡ï¿½ï¿½Å¥
     EnableWindow(g_hFetchButton, TRUE);
 
     if (g_repositories.empty()) {
-        SetWindowTextA(g_hStatusLabel, "Î´ÕÒµ½¸ÃÓÃ»§²Ö¿â");
+        SetWindowTextA(g_hStatusLabel, "Î´ï¿½Òµï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ö¿ï¿½");
         return;
     }
 
-    // Ìî³ä²Ö¿âÁÐ±í£¬Ã¿¸öÏîÄ¿Ç°ÃæÌí¼ÓÎ´Ñ¡ÖÐµÄ¸´Ñ¡¿ò×´Ì¬
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½Ð±ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½Ä¿Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´Ñ¡ï¿½ÐµÄ¸ï¿½Ñ¡ï¿½ï¿½×´Ì¬
     int validRepoCount = 0;
     for (const auto& repo : g_repositories) {
-        // ¼ì²éÊÇ·ñÎªÓÐÐ§²Ö¿â£¨ÓÐÃû³ÆºÍURL£©
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Îªï¿½ï¿½Ð§ï¿½Ö¿â£¨ï¿½ï¿½ï¿½ï¿½ï¿½Æºï¿½URLï¿½ï¿½
         if (repo.name.empty() || repo.clone_url.empty()) {
             continue;
         }
 
-        // ¹¹ÔìÏÔÊ¾ÎÄ±¾£¨Ê¹ÓÃGBK±àÂëµÄ×Ö·û´®£©
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Ä±ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½GBKï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
         std::string itemText = repo.name + " (" + std::to_string(repo.stars) + ")";
 
-        // Ìí¼ÓÃèÊöÐÅÏ¢
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
         if (!repo.description.empty()) {
             itemText += " - " + repo.description;
         } else {
-            itemText += " - ÎÞÃèÊö";
+            itemText += " - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
         }
 
-        // Ìí¼ÓÏîÄ¿µ½ÁÐ±í
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Ð±ï¿½
         int index = SendMessageA(g_hRepoList, LB_ADDSTRING, 0, (LPARAM)new std::string(itemText));
-        // ÉèÖÃÏîÄ¿Êý¾Ý£¬×îµÍÎ»Îª0±íÊ¾Î´Ñ¡ÖÐ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Î»Îª0ï¿½ï¿½Ê¾Î´Ñ¡ï¿½ï¿½
         SendMessageA(g_hRepoList, LB_SETITEMDATA, index, 0);
         validRepoCount++;
     }
 
     if (validRepoCount == 0) {
-        SetWindowTextA(g_hStatusLabel, "Î´ÕÒµ½ÓÐÐ§²Ö¿â");
+        SetWindowTextA(g_hStatusLabel, "Î´ï¿½Òµï¿½ï¿½ï¿½Ð§ï¿½Ö¿ï¿½");
         return;
     }
 
-    std::string statusText = "ÕÒµ½ " + std::to_string(validRepoCount) + " ¸ö²Ö¿â";
+    std::string statusText = "ï¿½Òµï¿½ " + std::to_string(validRepoCount) + " ï¿½ï¿½ï¿½Ö¿ï¿½";
     SetWindowTextA(g_hStatusLabel, statusText.c_str());
-    EnableWindow(g_hCloneButton, FALSE); // ³õÊ¼×´Ì¬ÏÂÃ»ÓÐÑ¡ÖÐÏî
+    EnableWindow(g_hCloneButton, FALSE); // ï¿½ï¿½Ê¼×´Ì¬ï¿½ï¿½Ã»ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½
 }
 
 void OnBrowseButtonClick(HWND hwndDlg) {
@@ -306,46 +324,46 @@ void OnBrowseButtonClick(HWND hwndDlg) {
 }
 
 void OnCloneButtonClick(HWND hwndDlg) {
-    // »ñÈ¡Ñ¡ÖÐµÄ²Ö¿âË÷Òý
+    // ï¿½ï¿½È¡Ñ¡ï¿½ÐµÄ²Ö¿ï¿½ï¿½ï¿½ï¿½ï¿½
     int count = SendMessageA(g_hRepoList, LB_GETCOUNT, 0, 0);
     std::vector<int> selectedIndices;
     
     for (int i = 0; i < count; i++) {
-        // ¼ì²éÃ¿¸öÏîÄ¿µÄÑ¡ÖÐ×´Ì¬£¨Í¨¹ý¼ì²é¸´Ñ¡¿ò×´Ì¬£©
+        // ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½Ñ¡ï¿½ï¿½×´Ì¬ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½é¸´Ñ¡ï¿½ï¿½×´Ì¬ï¿½ï¿½
         DWORD itemData = SendMessageA(g_hRepoList, LB_GETITEMDATA, i, 0);
-        if (itemData & 1) { // ×îµÍÎ»Îª1±íÊ¾Ñ¡ÖÐ
+        if (itemData & 1) { // ï¿½ï¿½ï¿½ï¿½Î»Îª1ï¿½ï¿½Ê¾Ñ¡ï¿½ï¿½
             selectedIndices.push_back(i);
         }
     }
     
     if (selectedIndices.empty()) {
-        MessageBoxA(hwndDlg, "Çë´ÓÁÐ±íÖÐÑ¡ÔñÖÁÉÙÒ»¸ö²Ö¿â", "ÌáÊ¾", MB_OK | MB_ICONWARNING);
+        MessageBoxA(hwndDlg, "ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö¿ï¿½", "ï¿½ï¿½Ê¾", MB_OK | MB_ICONWARNING);
         return;
     }
 
-    // »ñÈ¡Ä¿±êÂ·¾¶
+    // ï¿½ï¿½È¡Ä¿ï¿½ï¿½Â·ï¿½ï¿½
     char pathBuffer[MAX_PATH];
     GetWindowTextA(g_hPathEdit, pathBuffer, MAX_PATH);
 
     if (strlen(pathBuffer) == 0) {
-        MessageBoxA(hwndDlg, "ÇëÑ¡Ôñ±£´æµÄÄ¿±êÂ·¾¶", "ÌáÊ¾", MB_OK | MB_ICONWARNING);
+        MessageBoxA(hwndDlg, "ï¿½ï¿½Ñ¡ï¿½ñ±£´ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½Â·ï¿½ï¿½", "ï¿½ï¿½Ê¾", MB_OK | MB_ICONWARNING);
         return;
     }
 
-    // ½ûÓÃ°´Å¥·ÀÖ¹ÖØ¸´µã»÷
+    // ï¿½ï¿½ï¿½Ã°ï¿½Å¥ï¿½ï¿½Ö¹ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½
     EnableWindow(g_hCloneButton, FALSE);
     EnableWindow(g_hFetchButton, FALSE);
-    std::string status = "ÕýÔÚ¿ËÂ¡ " + std::to_string(selectedIndices.size()) + " ¸ö²Ö¿â...";
+    std::string status = "ï¿½ï¿½ï¿½Ú¿ï¿½Â¡ " + std::to_string(selectedIndices.size()) + " ï¿½ï¿½ï¿½Ö¿ï¿½...";
     SetWindowTextA(g_hStatusLabel, status.c_str());
 
-    // ´´½¨Ïß³Ì¿ËÂ¡²Ö¿â£¨´«µÝÑ¡ÖÐµÄË÷ÒýÁÐ±í£©
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ß³Ì¿ï¿½Â¡ï¿½Ö¿â£¨ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½
     CreateThread(NULL, 0, CloneRepositoryThread, new std::vector<int>(selectedIndices), 0, NULL);
 }
 
 DWORD WINAPI CloneRepositoryThread(LPVOID lpParam) {
     std::vector<int>* selectedIndices = (std::vector<int>*)lpParam;
 
-    // »ñÈ¡Ä¿±êÂ·¾¶
+    // ï¿½ï¿½È¡Ä¿ï¿½ï¿½Â·ï¿½ï¿½
     char pathBuffer[MAX_PATH];
     SendMessageA(g_hPathEdit, WM_GETTEXT, MAX_PATH, (LPARAM)pathBuffer);
 
@@ -353,45 +371,45 @@ DWORD WINAPI CloneRepositoryThread(LPVOID lpParam) {
     int clonedCount = 0;
     int totalToClone = selectedIndices->size();
     
-    // ¿ËÂ¡Ã¿¸öÑ¡ÖÐµÄ²Ö¿â
+    // ï¿½ï¿½Â¡Ã¿ï¿½ï¿½Ñ¡ï¿½ÐµÄ²Ö¿ï¿½
     for (int index : *selectedIndices) {
-        // »ñÈ¡²Ö¿âÃû³Æ£¨ÒÑ¾­ÊÇGBK±àÂë£©
+        // ï¿½ï¿½È¡ï¿½Ö¿ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½GBKï¿½ï¿½ï¿½ë£©
         std::string repoName = g_repositories[index].name;
         std::string fullPath = std::string(pathBuffer) + "\\" + repoName;
 
-        // Ö´ÐÐ¿ËÂ¡²Ù×÷£¨clone_urlÊÇUTF-8±àÂë£©
+        // Ö´ï¿½Ð¿ï¿½Â¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½clone_urlï¿½ï¿½UTF-8ï¿½ï¿½ï¿½ë£©
         bool success = GitHubAPI::cloneRepository(g_repositories[index].clone_url, fullPath);
         if (!success) {
             allSuccess = false;
         }
         clonedCount++;
         
-        // ¸üÐÂ×´Ì¬ÐÅÏ¢
-        std::string status = "ÕýÔÚ¿ËÂ¡ " + std::to_string(clonedCount) + "/" + std::to_string(totalToClone) + " ¸ö²Ö¿â...";
+        // ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½Ï¢
+        std::string status = "ï¿½ï¿½ï¿½Ú¿ï¿½Â¡ " + std::to_string(clonedCount) + "/" + std::to_string(totalToClone) + " ï¿½ï¿½ï¿½Ö¿ï¿½...";
         SendMessageA(GetDlgItem(GetParent(g_hPathEdit), IDC_STATUS_LABEL), WM_SETTEXT, 0, (LPARAM)status.c_str());
     }
 
-    // ÇåÀíÄÚ´æ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½
     delete selectedIndices;
 
-    // ·¢ËÍÏûÏ¢Í¨ÖªÖ÷Ïß³Ì¸üÐÂUI
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ÖªÍ¨ï¿½ï¿½ï¿½Ì¸ß³ï¿½ï¿½ï¿½UI
     PostMessage(GetParent(g_hCloneButton), WM_USER + 2, (WPARAM)allSuccess, 0);
 
     return 0;
 }
 
-// UTF-8×ªGBKº¯Êý
+// UTF-8×ªGBKï¿½ï¿½ï¿½ï¿½
 std::string Utf8ToGbk(const std::string& utf8Str) {
     if (utf8Str.empty()) return utf8Str;
 
-    // ÏÈ½«UTF-8×ª»»Îª¿í×Ö·û
+    // ï¿½È½ï¿½UTF-8×ªï¿½ï¿½Îªï¿½ï¿½ï¿½Ö·ï¿½
     int wideCharLength = MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, NULL, 0);
     if (wideCharLength <= 0) return utf8Str;
 
     std::vector<WCHAR> wideStr(wideCharLength);
     MultiByteToWideChar(CP_UTF8, 0, utf8Str.c_str(), -1, wideStr.data(), wideCharLength);
 
-    // ÔÙ½«¿í×Ö·û×ª»»ÎªGBK
+    // ï¿½Ù½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½×ªï¿½ï¿½ÎªGBK
     int gbkLength = WideCharToMultiByte(936, 0, wideStr.data(), -1, NULL, 0, NULL, NULL);
     if (gbkLength <= 0) return utf8Str;
 
@@ -399,4 +417,20 @@ std::string Utf8ToGbk(const std::string& utf8Str) {
     WideCharToMultiByte(936, 0, wideStr.data(), -1, gbkStr.data(), gbkLength, NULL, NULL);
 
     return std::string(gbkStr.data(), gbkLength - 1); // -1 to exclude null terminator
-}
+}/*
+ * GitHubä»“åº“å…‹éš†å·¥å…·
+ * Copyright (C) 2025 OpenSource Contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */

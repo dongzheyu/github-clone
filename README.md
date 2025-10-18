@@ -1,6 +1,12 @@
 # GitHub 仓库克隆工具
 
+Copyright (C) 2025 OpenSource Contributors
+
 这是一个可以帮助你轻松下载 GitHub 用户代码仓库的小工具，它有多种使用方式：适合普通用户的图形界面版和适合技术用户的命令行版。
+
+## 许可证
+
+本项目采用 GNU General Public License v3.0 许可证。详情请见 [LICENSE](LICENSE) 文件。
 
 ## 这个工具有什么用？
 
@@ -33,17 +39,7 @@ github_clone_cli <用户名> <保存路径>
 github_clone_cli microsoft D:\Projects
 ```
 
-### 方法三：EasyX 图形界面版（现代化界面）
-
-我们还提供了一个使用 EasyX 图形库开发的现代化界面版本：
-1. 运行 `github_clone_easyx.exe`
-2. 在界面上输入 GitHub 用户名
-3. 点击"获取仓库"按钮获取仓库列表
-4. 从列表中选择要克隆的仓库
-5. 选择保存路径
-6. 点击"克隆"按钮开始下载
-
-### 方法四：Qt 图形界面版（功能最丰富的界面）
+### 方法三：Qt 图形界面版（功能最丰富的界面）
 
 最新版本使用 Qt 框架开发，具有更现代、更友好的用户界面：
 1. 运行 `github_clone_qt.exe`
@@ -52,12 +48,6 @@ github_clone_cli microsoft D:\Projects
 4. 从列表中选择要克隆的仓库
 5. 选择保存路径
 6. 点击"克隆选中仓库"按钮开始下载
-
-## EasyX 图形库支持
-
-本项目现已集成 EasyX 图形库支持，可以使用 D:\桌面\easyx4mingw_25.9.10 中的图形库进行图形界面开发。
-- 头文件已复制到: D:\msys64\mingw64\include\
-- 库文件已复制到: D:\msys64\mingw64\lib\
 
 ## Qt 图形库支持
 
@@ -76,7 +66,6 @@ github_clone_cli microsoft D:\Projects
 对于想了解项目内部结构的开发者：
 - `src/main_cli.cpp` - 命令行版本主程序
 - `src/main_win32.cpp` - Win32 图形界面版本主程序
-- `src/main_win32_easyx.cpp` - EasyX 图形界面版本主程序
 - `src/main_qt.cpp` - Qt 图形界面版本主程序入口
 - `src/mainwindow.h` - Qt 主窗口类头文件
 - `src/mainwindow.cpp` - Qt 主窗口类实现
@@ -85,6 +74,7 @@ github_clone_cli microsoft D:\Projects
 - `include/github_api.h` - GitHub 功能的接口声明
 - `include/utils.h` - 辅助功能的接口声明
 - `resources/resource.rc` - Win32 图形界面的资源文件
+- `resources/logo.ico` - 应用程序图标文件
 
 ## 备份文件
 

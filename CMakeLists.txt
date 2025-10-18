@@ -39,7 +39,6 @@ if (WIN32)
     target_include_directories(github_clone_win32 PRIVATE include)
 endif()
 
-
 # ==================== Qt UI 版本 ====================
 # 查找 Qt6 库（如果没找到则查找 Qt5）
 find_package(Qt6 COMPONENTS Core Widgets REQUIRED)
@@ -53,12 +52,19 @@ if (Qt6_FOUND OR Qt5_FOUND)
     set(CMAKE_AUTOUIC ON)
     set(CMAKE_AUTORCC ON)
     
+    # 创建资源文件
+    set(RESOURCE_FILES
+        resources/logo.ico
+    )
+    
     add_executable(github_clone_qt
         src/main_qt.cpp
         src/mainwindow.cpp
         src/repositorylistitem.cpp
         src/github_api.cpp
-        src/utils.cpp)
+        src/utils.cpp
+        ${RESOURCE_FILES}
+    )
 
     # 根据找到的 Qt 版本链接相应的库
     if (Qt6_FOUND)
@@ -76,6 +82,11 @@ if (Qt6_FOUND OR Qt5_FOUND)
     endif()
         
     target_include_directories(github_clone_qt PRIVATE include)
+    
+    # 设置Windows图标和版本信息
+    if (WIN32)
+        target_sources(github_clone_qt PRIVATE resources/logo.rc)
+    endif()
 endif()
 
 # ==================== CLion 特定配置 ====================
